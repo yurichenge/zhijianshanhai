@@ -1,0 +1,1937 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>指间山海 · 星主攻略站</title>
+
+<!-- ═══════════════════════════════════════════════════════
+     ⚙ 云端同步配置（可选）
+     ─────────────────────────────────────────────────────
+     默认情况下，数据只保存在本地浏览器。
+     如需让所有访问该网址的人都看到同一份数据，请按下方
+     步骤配置 Supabase（免费）：
+
+     1. 前往 https://supabase.com 注册并创建新项目
+     2. 进入 SQL Editor，粘贴以下 SQL 并运行：
+
+        create table if not exists public.guide_data (
+          id text primary key,
+          content jsonb not null,
+          updated_at timestamptz default now()
+        );
+        alter table public.guide_data enable row level security;
+        drop policy if exists "anon_all" on public.guide_data;
+        create policy "anon_all" on public.guide_data
+          for all to anon using (true) with check (true);
+
+     3. 进入 Settings → API，复制 "Project URL" 和 "anon public" key
+     4. 将下方两个空字符串替换为你的 URL 和 key，保存文件
+
+     配置完成后，任何打开该网址的人都能看到同一份数据。
+     ═══════════════════════════════════════════════════════ -->
+<script>
+window.CLOUD_CONFIG = {
+  SUPABASE_URL: 'https://xuzjkllvibrieieuheaf.supabase.co',       // 例如 'https://xxxxx.supabase.co'
+  SUPABASE_ANON_KEY: 'sb_publishable_tIdXKr6fpDL9YSDWzAiHZA_07dc46Lo',  // 例如 'eyJhbGciOi...'
+  DOC_ID: 'main'          // 共享文档 ID（保持不变即可）
+};
+</script>
+
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface-hover: #222633;
+    --border: #2a2e3d;
+    --text: #e4e6ef;
+    --text-dim: #8b90a4;
+    --accent: #c9a84c;
+    --accent-dim: #8a7535;
+    --danger: #e05555;
+    --success: #4caf7a;
+    --cloud: #4fc3f7;
+    --radius: 10px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.7;
+  }
+
+  .header {
+    background: linear-gradient(135deg, #1a1d27 0%, #12141c 100%);
+    border-bottom: 2px solid var(--accent-dim);
+    padding: 20px 24px 16px;
+    text-align: center;
+  }
+  .header h1 { font-size: 26px; font-weight: 700; letter-spacing: 2px; color: var(--accent); }
+  .header .sub { font-size: 13px; color: var(--text-dim); margin-top: 4px; }
+
+  .nav {
+    display: flex; gap: 0; background: var(--surface);
+    border-bottom: 1px solid var(--border); overflow-x: auto;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav::-webkit-scrollbar { height: 0; }
+  .nav-btn {
+    flex: 1; min-width: 100px; padding: 14px 12px;
+    text-align: center; font-size: 14px; font-weight: 600;
+    color: var(--text-dim); background: transparent; border: none;
+    border-bottom: 3px solid transparent; cursor: pointer;
+    transition: all .2s; white-space: nowrap; font-family: inherit;
+  }
+  .nav-btn:hover { color: var(--text); background: var(--surface-hover); }
+  .nav-btn.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(201,168,76,.06); }
+
+  .main { max-width: 960px; margin: 0 auto; padding: 24px 16px 80px; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .panel-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
+  }
+  .panel-title { font-size: 20px; font-weight: 700; color: var(--accent); }
+  .panel-actions { display: flex; gap: 10px; }
+
+  .btn {
+    padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    cursor: pointer; border: 1px solid var(--border); background: var(--surface);
+    color: var(--text); transition: all .2s; font-family: inherit; white-space: nowrap;
+  }
+  .btn:hover { background: var(--surface-hover); border-color: var(--accent-dim); }
+  .btn-primary { background: var(--accent); color: #0f1117; border-color: var(--accent); }
+  .btn-primary:hover { background: #d4b35a; }
+  .btn-danger { color: var(--danger); border-color: rgba(224,85,85,.3); }
+  .btn-danger:hover { background: rgba(224,85,85,.1); }
+  .btn-sm { padding: 5px 12px; font-size: 12px; }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px; margin-bottom: 16px;
+    transition: border-color .2s; position: relative;
+  }
+  .card:hover { border-color: #3a3f52; }
+  .card-title { font-size: 16px; font-weight: 700; color: var(--accent); margin-bottom: 10px; outline: none; }
+  .card-body { font-size: 14px; color: var(--text); outline: none; white-space: pre-wrap; word-break: break-word; }
+  .card-body:focus, .card-title:focus { background: rgba(201,168,76,.05); border-radius: 4px; }
+  .card-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; opacity: 0; transition: opacity .2s; }
+  .card:hover .card-footer, .card.editing .card-footer { opacity: 1; }
+  .card.editing { border-color: var(--accent-dim); box-shadow: 0 0 0 1px var(--accent-dim); }
+
+  .empty-tip { text-align: center; padding: 60px 20px; color: var(--text-dim); font-size: 14px; }
+
+  /* 状态栏 */
+  .status-bar {
+    position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface);
+    border-top: 1px solid var(--border); padding: 8px 20px; font-size: 12px;
+    color: var(--text-dim); display: flex; justify-content: space-between;
+    align-items: center; z-index: 100; flex-wrap: wrap; gap: 8px;
+  }
+  .status-bar .saved { color: var(--success); }
+  .status-bar .cloud { color: var(--cloud); }
+  .status-bar .error { color: var(--danger); }
+
+  .edit-banner {
+    display: none; background: rgba(201,168,76,.12); border: 1px solid var(--accent-dim);
+    border-radius: var(--radius); padding: 10px 16px; margin-bottom: 16px;
+    font-size: 13px; color: var(--accent); align-items: center;
+    justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  .edit-banner.show { display: flex; }
+
+  .toast {
+    position: fixed; bottom: 60px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--surface); border: 1px solid var(--accent-dim);
+    color: var(--accent); padding: 10px 24px; border-radius: 20px;
+    font-size: 13px; opacity: 0; pointer-events: none; transition: all .3s; z-index: 500;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.cloud { border-color: var(--cloud); color: var(--cloud); }
+  .toast.error { border-color: var(--danger); color: var(--danger); }
+
+  /* ═══════════ 属性克制 / 星主 / 幻灵 / 判定规则 ═══════════ */
+  .attr-panel, .star-panel {
+    background: linear-gradient(160deg, #1a1d27 0%, #15181f 100%);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px 20px 22px; margin-bottom: 22px;
+  }
+  .attr-panel-head { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .attr-panel-head::before { content: ''; width: 4px; height: 18px; background: var(--accent); border-radius: 2px; }
+  .attr-panel-head h2 { font-size: 17px; font-weight: 700; color: var(--accent); letter-spacing: 1px; }
+  .attr-sub { font-size: 12px; color: var(--text-dim); margin-bottom: 18px; padding-left: 14px; }
+
+  .attr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: center; }
+  @media (max-width: 720px) { .attr-grid { grid-template-columns: 1fr; } }
+  .attr-box { background: rgba(255,255,255,.02); border: 1px solid var(--border); border-radius: 8px; padding: 12px 10px 6px; }
+  .attr-box-title { font-size: 12px; color: var(--text-dim); text-align: center; letter-spacing: 3px; margin-bottom: 2px; }
+  .attr-svg { width: 100%; height: auto; display: block; }
+  .attr-text { font-size: 19px; font-weight: 700; fill: #e4e6ef; font-family: inherit; }
+  .glow-thunder { filter: drop-shadow(0 0 10px rgba(126,217,87,.55)); }
+  .glow-ice     { filter: drop-shadow(0 0 10px rgba(79,195,247,.55)); }
+  .glow-fire    { filter: drop-shadow(0 0 10px rgba(255,76,76,.55)); }
+  .glow-light   { filter: drop-shadow(0 0 10px rgba(255,217,61,.55)); }
+  .glow-dark    { filter: drop-shadow(0 0 10px rgba(150,95,220,.65)); }
+
+  .attr-rule { margin-top: 16px; display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .attr-rule-item { font-size: 13px; padding: 6px 16px; border-radius: 20px; border: 1px solid; font-weight: 600; }
+  .attr-rule-item.good { color: #7ED957; border-color: rgba(126,217,87,.35); background: rgba(126,217,87,.07); }
+  .attr-rule-item.bad { color: #ff6b6b; border-color: rgba(224,85,85,.35); background: rgba(224,85,85,.07); }
+
+  .star-section-title {
+    font-size: 14px; font-weight: 700; color: var(--text); margin: 20px 0 12px;
+    padding-left: 10px; border-left: 3px solid var(--accent); letter-spacing: 1px;
+  }
+  .star-section-title:first-of-type { margin-top: 4px; }
+
+  .star-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 660px) { .star-grid { grid-template-columns: 1fr; } }
+
+  .star-item {
+    display: flex; gap: 12px; align-items: flex-start; padding: 13px 14px;
+    background: rgba(255,255,255,.02); border: 1px solid var(--border);
+    border-left: 3px solid var(--c, var(--accent)); border-radius: 8px;
+    transition: background .2s, transform .2s, box-shadow .2s;
+  }
+  .star-item:hover { background: rgba(255,255,255,.05); transform: translateY(-2px); box-shadow: 0 6px 18px -8px var(--c, var(--accent)); }
+  .star-icon {
+    flex: 0 0 38px; width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--c, var(--accent)); background: rgba(255,255,255,.04);
+    border: 1.5px solid currentColor; box-shadow: 0 0 10px -3px currentColor;
+  }
+  .star-icon svg { width: 20px; height: 20px; display: block; }
+  .star-content { flex: 1 1 auto; min-width: 0; }
+  .star-name { font-size: 15px; font-weight: 700; color: var(--c, var(--accent)); letter-spacing: .5px; margin-bottom: 4px; }
+  .star-max {
+    display: inline-block; margin-left: 6px; font-size: 11px; font-weight: 700;
+    color: #0f1117; background: #FFB84D; padding: 1px 7px;
+    border-radius: 10px; vertical-align: middle; letter-spacing: .2px;
+  }
+  .star-desc { font-size: 13px; color: var(--text); line-height: 1.7; }
+  .star-formula {
+    margin: 8px 0 6px; padding: 8px 12px; background: rgba(0,0,0,.3);
+    border: 1px dashed rgba(255,107,107,.4); border-radius: 6px;
+    font-size: 12.5px; color: #FFB84D; font-family: "SF Mono", Consolas, "Courier New", monospace;
+    letter-spacing: .3px; line-height: 1.6;
+  }
+  .star-note {
+    font-size: 12px; color: var(--text-dim); line-height: 1.65;
+    margin-top: 6px; padding-left: 8px; border-left: 2px solid rgba(255,255,255,.08);
+  }
+  .star-special {
+    display: flex; gap: 14px; align-items: flex-start; padding: 16px;
+    border-radius: 8px; background: linear-gradient(135deg, rgba(201,168,76,.13), rgba(201,168,76,.03));
+    border: 1px solid rgba(201,168,76,.38);
+  }
+  .star-special .star-name { font-size: 15.5px; }
+
+  .hl { font-style: normal; font-weight: 700; color: #FFD93D; background: rgba(255,217,61,.12); padding: 0 4px; border-radius: 3px; }
+  .hl-warn { font-style: normal; font-weight: 700; color: #FF8A5C; background: rgba(255,138,92,.13); padding: 0 4px; border-radius: 3px; }
+
+  .rule-formula {
+    margin: 10px 0 4px; padding: 10px 14px;
+    background: linear-gradient(90deg, rgba(0,0,0,.42), rgba(0,0,0,.2));
+    border: 1px solid rgba(255,217,61,.28); border-left: 3px solid #FFD93D;
+    border-radius: 6px; font-size: 13px; color: #FFD93D; font-weight: 600;
+    letter-spacing: .4px; line-height: 1.65;
+    font-family: "SF Mono", Consolas, "Courier New", monospace;
+  }
+  .rule-note { margin-top: 8px; font-size: 12.5px; color: var(--text); line-height: 1.75; }
+
+  .judge-flow { display: flex; align-items: stretch; gap: 10px; margin-top: 4px; flex-wrap: wrap; }
+  .judge-step {
+    flex: 1 1 240px; display: flex; gap: 12px; align-items: flex-start; padding: 14px;
+    background: rgba(255,255,255,.02); border: 1px solid var(--border);
+    border-left: 3px solid var(--c, var(--accent)); border-radius: 8px; transition: background .2s;
+  }
+  .judge-step:hover { background: rgba(255,255,255,.05); }
+  .judge-num {
+    flex: 0 0 28px; width: 28px; height: 28px; border-radius: 50%;
+    background: var(--c, var(--accent)); color: #0f1117;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 14px; box-shadow: 0 0 12px -3px var(--c, var(--accent));
+  }
+  .judge-title { font-size: 14px; font-weight: 700; color: var(--c, var(--accent)); margin-bottom: 4px; letter-spacing: .4px; }
+  .judge-desc { font-size: 13px; color: var(--text); line-height: 1.7; }
+  .judge-arrow { flex: 0 0 auto; align-self: center; font-size: 22px; color: var(--accent); font-weight: 700; padding: 0 2px; }
+  .formula-final {
+    margin-top: 16px; padding: 14px 16px;
+    background: linear-gradient(135deg, rgba(255,138,92,.10), rgba(255,138,92,.02));
+    border: 1px dashed rgba(255,138,92,.45); border-radius: 8px;
+  }
+  .formula-final .ff-label { font-size: 12px; color: #FF8A5C; font-weight: 700; letter-spacing: 1px; margin-bottom: 6px; }
+  .formula-final .ff-eq {
+    font-size: 14px; color: #FFD93D; font-weight: 700;
+    font-family: "SF Mono", Consolas, "Courier New", monospace;
+    letter-spacing: .3px; line-height: 1.65; word-break: break-word;
+  }
+  .formula-final .ff-cap { margin-top: 8px; font-size: 12.5px; color: var(--text-dim); }
+  .formula-final .ff-cap b {
+    color: #FF6B6B; font-size: 14px; background: rgba(255,107,107,.13);
+    padding: 1px 8px; border-radius: 10px; margin-left: 4px;
+  }
+
+  /* ═══════════ 幻灵图鉴 · 筛选 ═══════════ */
+  .hero-filters {
+    padding: 14px 16px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .filter-group { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .filter-label {
+    flex: 0 0 auto; font-size: 12.5px; font-weight: 700;
+    color: var(--text-dim); letter-spacing: 1.5px;
+    padding-left: 10px; border-left: 3px solid var(--accent);
+    line-height: 1.4; white-space: nowrap;
+  }
+  .filter-btns { display: flex; gap: 6px; flex-wrap: wrap; flex: 1 1 auto; }
+  .filter-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 6px 12px; border-radius: 8px;
+    border: 1px solid var(--border); background: rgba(255,255,255,.025);
+    color: var(--text); font-size: 12.5px; font-weight: 600;
+    cursor: pointer; transition: all .18s;
+    font-family: inherit; letter-spacing: .3px;
+  }
+  .filter-btn svg { width: 13px; height: 13px; display: block; flex: 0 0 auto; }
+  .filter-btn:hover { background: rgba(255,255,255,.06); border-color: var(--fc, var(--accent-dim)); color: var(--fc, var(--accent)); }
+  .filter-btn.active {
+    background: color-mix(in srgb, var(--fc, var(--accent)) 18%, transparent);
+    border-color: var(--fc, var(--accent));
+    color: var(--fc, var(--accent));
+    box-shadow: 0 0 12px -4px var(--fc, var(--accent));
+  }
+  .filter-summary {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 8px; border-top: 1px dashed rgba(255,255,255,.06);
+    font-size: 12px; color: var(--text-dim); gap: 10px; flex-wrap: wrap;
+  }
+  .filter-summary .fs-count b { color: var(--accent); font-weight: 700; }
+  .filter-reset-btn {
+    background: transparent; border: 1px solid var(--border); color: var(--text-dim);
+    padding: 4px 12px; border-radius: 6px; font-size: 11.5px; font-weight: 600;
+    cursor: pointer; transition: all .18s; font-family: inherit;
+  }
+  .filter-reset-btn:hover { color: var(--accent); border-color: var(--accent-dim); background: rgba(201,168,76,.08); }
+
+  /* ═══════════ 幻灵图鉴 · 表格 ═══════════ */
+  .hero-table-wrap {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow-x: auto; overflow-y: hidden;
+  }
+  .hero-table-wrap::-webkit-scrollbar { height: 8px; }
+  .hero-table-wrap::-webkit-scrollbar-track { background: transparent; }
+  .hero-table-wrap::-webkit-scrollbar-thumb { background: #33384a; border-radius: 4px; }
+
+  .hero-table { width: 100%; border-collapse: collapse; min-width: 980px; }
+  .hero-table thead th {
+    position: sticky; top: 0;
+    background: linear-gradient(180deg, #232738, #1c1f2b);
+    color: var(--accent); font-size: 12.5px; font-weight: 700;
+    letter-spacing: 1px; text-align: left; padding: 13px 14px;
+    border-bottom: 2px solid var(--accent-dim); white-space: nowrap; z-index: 2;
+  }
+  .hero-table thead th.th-action { width: 62px; text-align: center; }
+  .hero-table tbody tr {
+    border-bottom: 1px solid var(--border); cursor: pointer;
+    transition: background .18s; position: relative;
+  }
+  .hero-table tbody tr:last-child { border-bottom: none; }
+  .hero-table tbody tr:hover { background: rgba(201,168,76,.06); }
+  .hero-table tbody tr:hover td:first-child::before {
+    background: var(--row-c, var(--accent));
+    box-shadow: 0 0 12px var(--row-c, var(--accent));
+  }
+  .hero-table td {
+    padding: 13px 14px; font-size: 13px; color: var(--text);
+    vertical-align: top; line-height: 1.65;
+  }
+  .hero-table td:first-child { position: relative; padding-left: 18px; }
+  .hero-table td:first-child::before {
+    content: ''; position: absolute; left: 0; top: 50%;
+    transform: translateY(-50%); width: 3px; height: 60%;
+    background: transparent; border-radius: 2px;
+    transition: background .2s, box-shadow .2s;
+  }
+  .hero-table td.td-action { width: 62px; text-align: center; padding: 8px 8px; vertical-align: middle; }
+  .row-del-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border-radius: 7px;
+    border: 1px solid rgba(224,85,85,.28); background: rgba(224,85,85,.06);
+    color: #e05555; font-size: 14px; font-weight: 700; cursor: pointer;
+    transition: all .18s; font-family: inherit; line-height: 1; padding: 0;
+  }
+  .row-del-btn:hover {
+    background: rgba(224,85,85,.2); border-color: rgba(224,85,85,.7);
+    transform: scale(1.1); box-shadow: 0 0 12px -3px rgba(224,85,85,.6);
+  }
+
+  .hero-name-cell { display: flex; align-items: center; gap: 10px; min-width: 110px; }
+  .hero-name-cell .hero-icon-sm { flex: 0 0 34px; width: 34px; height: 34px; }
+  .hero-name-cell .hero-icon-sm svg { width: 100%; height: 100%; display: block; }
+  .hero-name-cell .hn-text {
+    font-size: 14px; font-weight: 700; color: var(--text);
+    letter-spacing: .5px; white-space: nowrap;
+  }
+
+  .cell-tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 12px; font-weight: 700; letter-spacing: .4px;
+    padding: 3px 10px; border-radius: 12px;
+    border: 1px solid currentColor; background: rgba(255,255,255,.035);
+    white-space: nowrap;
+  }
+  .cell-tag svg { width: 12px; height: 12px; display: block; flex: 0 0 auto; }
+
+  .cell-equip { display: flex; flex-direction: column; gap: 5px; min-width: 160px; }
+  .cell-equip .eq-line { display: flex; gap: 6px; font-size: 12.5px; line-height: 1.55; }
+  .cell-equip .eq-key { flex: 0 0 38px; color: var(--text-dim); font-weight: 600; letter-spacing: .3px; }
+  .cell-equip .eq-val { color: var(--text); word-break: break-word; }
+  .cell-equip .eq-val.empty { color: var(--text-dim); font-style: italic; }
+
+  .cell-artifact { min-width: 110px; }
+  .cell-artifact .art-name { font-weight: 600; color: var(--text); display: inline-block; }
+  .cell-artifact .cat-tag {
+    display: inline-block; font-size: 10.5px; color: var(--text-dim);
+    background: rgba(255,255,255,.05); padding: 0 6px;
+    border-radius: 8px; margin-left: 5px; border: 1px solid var(--border);
+    vertical-align: middle; letter-spacing: .3px;
+  }
+  .cell-artifact .empty, .cell-note.empty { color: var(--text-dim); font-style: italic; }
+  .cell-note {
+    min-width: 160px; max-width: 240px; font-size: 12.5px;
+    line-height: 1.65; color: var(--text); word-break: break-word;
+  }
+
+  .hero-table-empty {
+    text-align: center; padding: 70px 20px; color: var(--text-dim);
+    font-size: 14px; background: var(--surface);
+    border: 1px dashed var(--border); border-radius: var(--radius);
+  }
+  .hero-table-empty .ete-big { font-size: 34px; margin-bottom: 8px; opacity: .4; }
+  .hero-table-empty .ete-tip { font-size: 12.5px; margin-top: 6px; opacity: .7; }
+
+  /* ═══════════ 幻灵编辑 · 模态框 ═══════════ */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.72); backdrop-filter: blur(3px);
+    z-index: 400; align-items: center; justify-content: center; padding: 18px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal-panel {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; width: 100%; max-width: 780px; max-height: 92vh;
+    display: flex; flex-direction: column;
+    box-shadow: 0 24px 70px rgba(0,0,0,.6); overflow: hidden;
+  }
+  .modal-head {
+    padding: 16px 22px; border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    background: linear-gradient(135deg, rgba(201,168,76,.08), transparent);
+  }
+  .modal-head h3 { font-size: 16px; font-weight: 700; color: var(--accent); letter-spacing: 1px; }
+  .modal-close {
+    background: transparent; border: none; color: var(--text-dim);
+    font-size: 26px; line-height: 1; cursor: pointer;
+    padding: 0 6px; transition: color .2s; font-family: inherit;
+  }
+  .modal-close:hover { color: var(--danger); }
+  .modal-body { padding: 20px 22px; overflow-y: auto; flex: 1 1 auto; }
+  .modal-body::-webkit-scrollbar { width: 8px; }
+  .modal-body::-webkit-scrollbar-track { background: transparent; }
+  .modal-body::-webkit-scrollbar-thumb { background: #33384a; border-radius: 4px; }
+  .modal-foot {
+    padding: 14px 22px; border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: flex-end; gap: 10px;
+    background: rgba(0,0,0,.18);
+  }
+  .modal-foot .foot-left { margin-right: auto; }
+
+  .hero-preview {
+    display: flex; align-items: center; gap: 16px;
+    padding: 14px 16px; margin-bottom: 18px;
+    background: rgba(255,255,255,.02);
+    border: 1px dashed var(--border); border-radius: 10px;
+  }
+  .hero-preview-name { font-size: 19px; font-weight: 700; color: var(--text); letter-spacing: 1px; }
+
+  .form-row { margin-bottom: 18px; }
+  .form-label {
+    display: block; font-size: 13px; font-weight: 700;
+    color: var(--accent); letter-spacing: .8px; margin-bottom: 8px;
+    padding-left: 10px; border-left: 3px solid var(--accent);
+  }
+  .form-input, .form-textarea {
+    width: 100%; padding: 9px 13px;
+    background: rgba(0,0,0,.28); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-size: 13.5px;
+    font-family: inherit; outline: none;
+    transition: border-color .2s, background .2s;
+  }
+  .form-input:focus, .form-textarea:focus {
+    border-color: var(--accent-dim); background: rgba(0,0,0,.42);
+  }
+  .form-textarea { min-height: 74px; resize: vertical; line-height: 1.65; }
+
+  .btn-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .opt-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 13px; border-radius: 8px;
+    border: 1px solid var(--border); background: rgba(255,255,255,.025);
+    color: var(--text); font-size: 12.5px; font-weight: 600;
+    cursor: pointer; transition: all .18s;
+    font-family: inherit; letter-spacing: .3px;
+  }
+  .opt-btn:hover { background: rgba(255,255,255,.06); border-color: var(--c, var(--accent-dim)); }
+  .opt-btn.active {
+    background: color-mix(in srgb, var(--c, var(--accent)) 18%, transparent);
+    border-color: var(--c, var(--accent)); color: var(--c, var(--accent));
+    box-shadow: 0 0 12px -4px var(--c, var(--accent));
+  }
+  .opt-btn svg { width: 14px; height: 14px; display: block; flex: 0 0 auto; }
+  .opt-btn.plain.active {
+    background: rgba(201,168,76,.18); border-color: var(--accent);
+    color: var(--accent); box-shadow: 0 0 12px -4px var(--accent);
+  }
+
+  .part-block {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 12px; margin-bottom: 8px;
+    background: rgba(255,255,255,.02);
+    border: 1px solid var(--border); border-radius: 8px;
+  }
+  .part-label { flex: 0 0 52px; font-size: 13px; font-weight: 700; color: var(--text); padding-top: 5px; }
+  .part-options { flex: 1 1 auto; display: flex; flex-wrap: wrap; gap: 6px; }
+
+  .tab-bar {
+    display: flex; gap: 4px; margin-bottom: 10px;
+    border-bottom: 1px solid var(--border); padding-bottom: 0; overflow-x: auto;
+  }
+  .tab-bar::-webkit-scrollbar { height: 0; }
+  .tab-btn {
+    padding: 7px 16px; background: transparent; border: none;
+    border-bottom: 2px solid transparent; color: var(--text-dim);
+    font-size: 13px; font-weight: 700; letter-spacing: .4px;
+    cursor: pointer; transition: all .18s; font-family: inherit; white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .artifact-picker { margin-top: 4px; }
+  .add-artifact-row { display: flex; gap: 8px; margin-top: 10px; align-items: center; }
+  .add-artifact-row input {
+    flex: 1 1 auto; padding: 7px 12px;
+    background: rgba(0,0,0,.28); border: 1px dashed var(--border);
+    border-radius: 8px; color: var(--text); font-size: 12.5px;
+    font-family: inherit; outline: none;
+  }
+  .add-artifact-row input:focus { border-color: var(--accent-dim); }
+
+  @media (max-width: 600px) {
+    .header h1 { font-size: 20px; }
+    .nav-btn { font-size: 12px; min-width: 80px; padding: 12px 8px; }
+    .panel-title { font-size: 17px; }
+    .card { padding: 16px; }
+    .attr-text { font-size: 22px; }
+    .judge-flow { flex-direction: column; }
+    .judge-arrow { transform: rotate(90deg); }
+    .modal-panel { max-height: 96vh; border-radius: 10px; }
+    .modal-body { padding: 16px; }
+    .part-block { flex-direction: column; }
+    .part-label { padding-top: 0; }
+    .filter-label { flex-basis: 100%; border-left: none; padding-left: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>指间山海 · 星主攻略站</h1>
+  <div class="sub" id="headerSub">可编辑的专属攻略手册</div>
+</div>
+
+<nav class="nav" id="nav">
+  <button class="nav-btn active" data-panel="basics">基础讲解</button>
+  <button class="nav-btn" data-panel="heroes">幻灵图鉴</button>
+  <button class="nav-btn" data-panel="equip">装备图鉴</button>
+  <button class="nav-btn" data-panel="artifacts">神器图鉴</button>
+  <button class="nav-btn" data-panel="events">活动讲解</button>
+  <button class="nav-btn" data-panel="pvp">问鼎攻略</button>
+</nav>
+
+<div class="main" id="main">
+
+  <div class="edit-banner" id="editBanner">
+    <span>✎ 编辑模式已开启 —— 点击卡片文字直接修改，编辑完成后点击「完成编辑」保存</span>
+    <button class="btn btn-primary btn-sm" onclick="exitAllEdit()">完成编辑</button>
+  </div>
+
+  <!-- ─────────── 基础讲解 ─────────── -->
+  <div class="panel active" id="panel-basics">
+    <div class="panel-header">
+      <div class="panel-title">基础讲解</div>
+      <div class="panel-actions">
+        <button class="btn btn-primary" onclick="addCard('basics')">＋ 新增条目</button>
+      </div>
+    </div>
+
+    <div class="attr-panel">
+      <div class="attr-panel-head"><h2>属性克制关系</h2></div>
+      <div class="attr-sub">克制机制是推图与问鼎的核心变量 —— 配队前先看属性</div>
+
+      <div class="attr-grid">
+        <div class="attr-box">
+          <div class="attr-box-title">五 行 相 克</div>
+          <svg class="attr-svg" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="gThunder" cx="35%" cy="30%">
+                <stop offset="0%" stop-color="#b9f5a2"/><stop offset="60%" stop-color="#7ED957"/><stop offset="100%" stop-color="#3d7a26"/>
+              </radialGradient>
+              <radialGradient id="gIce" cx="35%" cy="30%">
+                <stop offset="0%" stop-color="#c4ecff"/><stop offset="60%" stop-color="#4FC3F7"/><stop offset="100%" stop-color="#1a6b96"/>
+              </radialGradient>
+              <radialGradient id="gFire" cx="35%" cy="30%">
+                <stop offset="0%" stop-color="#ffb9a8"/><stop offset="60%" stop-color="#FF4C4C"/><stop offset="100%" stop-color="#8f1c1c"/>
+              </radialGradient>
+              <marker id="mThunder" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+                <path d="M0,0 L10,5 L0,10 z" fill="#7ED957"/>
+              </marker>
+              <marker id="mIce" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+                <path d="M0,0 L10,5 L0,10 z" fill="#4FC3F7"/>
+              </marker>
+              <marker id="mFire" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+                <path d="M0,0 L10,5 L0,10 z" fill="#FF4C4C"/>
+              </marker>
+            </defs>
+            <line x1="225.5" y1="88.4" x2="304.5" y2="191.6" stroke="#7ED957" stroke-width="2.5" stroke-linecap="round" marker-end="url(#mThunder)" opacity=".85"/>
+            <line x1="288" y1="225" x2="112" y2="225" stroke="#4FC3F7" stroke-width="2.5" stroke-linecap="round" marker-end="url(#mIce)" opacity=".85"/>
+            <line x1="95.5" y1="191.6" x2="174.5" y2="88.4" stroke="#FF4C4C" stroke-width="2.5" stroke-linecap="round" marker-end="url(#mFire)" opacity=".85"/>
+            <g transform="translate(200,55)">
+              <circle r="34" fill="url(#gThunder)" class="glow-thunder"/>
+              <path d="M3,-19 L-11,3 L-2,3 L-5,19 L11,-4 L1,-4 Z" fill="#ffffff"/>
+            </g>
+            <text x="200" y="109" text-anchor="middle" class="attr-text">雷</text>
+            <g transform="translate(330,225)">
+              <circle r="34" fill="url(#gIce)" class="glow-ice"/>
+              <g stroke="#ffffff" stroke-width="3.2" stroke-linecap="round">
+                <line x1="0" y1="0" x2="17" y2="0"/><line x1="0" y1="0" x2="8.5" y2="14.7"/><line x1="0" y1="0" x2="-8.5" y2="14.7"/>
+                <line x1="0" y1="0" x2="-17" y2="0"/><line x1="0" y1="0" x2="-8.5" y2="-14.7"/><line x1="0" y1="0" x2="8.5" y2="-14.7"/>
+                <circle cx="0" cy="0" r="2.4" fill="#ffffff" stroke="none"/>
+              </g>
+            </g>
+            <text x="330" y="279" text-anchor="middle" class="attr-text">寒</text>
+            <g transform="translate(70,225)">
+              <circle r="34" fill="url(#gFire)" class="glow-fire"/>
+              <path d="M0,-19 C7,-10 14,-3 14,5 C14,13 8,18 0,18 C-8,18 -14,13 -14,5 C-14,-3 -7,-10 0,-19 Z" fill="#ffffff"/>
+              <path d="M0,-5 C3,-2 6,2 6,6 C6,10 3,12 0,12 C-3,12 -6,10 -6,6 C-6,2 -3,-2 0,-5 Z" fill="#FFD93D" opacity=".85"/>
+            </g>
+            <text x="70" y="279" text-anchor="middle" class="attr-text">炎</text>
+          </svg>
+        </div>
+
+        <div class="attr-box">
+          <div class="attr-box-title">光 暗 互 克</div>
+          <svg class="attr-svg" viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="gLight" cx="35%" cy="30%">
+                <stop offset="0%" stop-color="#fff6c2"/><stop offset="60%" stop-color="#FFD93D"/><stop offset="100%" stop-color="#a87b00"/>
+              </radialGradient>
+              <radialGradient id="gDark" cx="35%" cy="30%">
+                <stop offset="0%" stop-color="#bda0e8"/><stop offset="60%" stop-color="#7B4FA6"/><stop offset="100%" stop-color="#2d1a47"/>
+              </radialGradient>
+              <marker id="mLight" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+                <path d="M0,0 L10,5 L0,10 z" fill="#FFD93D"/>
+              </marker>
+              <marker id="mDark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+                <path d="M0,0 L10,5 L0,10 z" fill="#9B6FD4"/>
+              </marker>
+              <mask id="moonMask">
+                <rect x="-40" y="-40" width="80" height="80" fill="#ffffff"/>
+                <circle cx="9" cy="0" r="14" fill="#000000"/>
+              </mask>
+            </defs>
+            <line x1="162" y1="63" x2="240" y2="63" stroke="#FFD93D" stroke-width="2.5" stroke-linecap="round" marker-end="url(#mLight)" opacity=".9"/>
+            <line x1="238" y1="87" x2="160" y2="87" stroke="#9B6FD4" stroke-width="2.5" stroke-linecap="round" marker-end="url(#mDark)" opacity=".9"/>
+            <g transform="translate(120,75)">
+              <circle r="34" fill="url(#gLight)" class="glow-light"/>
+              <circle r="9" fill="#ffffff"/>
+              <g stroke="#ffffff" stroke-width="3.2" stroke-linecap="round">
+                <line x1="13" y1="0" x2="19" y2="0"/><line x1="9.2" y1="9.2" x2="13.4" y2="13.4"/><line x1="0" y1="13" x2="0" y2="19"/>
+                <line x1="-9.2" y1="9.2" x2="-13.4" y2="13.4"/><line x1="-13" y1="0" x2="-19" y2="0"/><line x1="-9.2" y1="-9.2" x2="-13.4" y2="-13.4"/>
+                <line x1="0" y1="-13" x2="0" y2="-19"/><line x1="9.2" y1="-9.2" x2="13.4" y2="-13.4"/>
+              </g>
+            </g>
+            <text x="120" y="129" text-anchor="middle" class="attr-text">光</text>
+            <g transform="translate(280,75)">
+              <circle r="34" fill="url(#gDark)" class="glow-dark"/>
+              <circle r="17" fill="#E8D5FF" mask="url(#moonMask)"/>
+            </g>
+            <text x="280" y="129" text-anchor="middle" class="attr-text">暗</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="attr-rule">
+        <div class="attr-rule-item good">克制方：伤害 &amp; 暴击率 +15%</div>
+        <div class="attr-rule-item bad">被克制方：命中率 −50%</div>
+      </div>
+    </div>
+
+    <div class="star-panel">
+      <div class="attr-panel-head"><h2>星主属性说明</h2></div>
+      <div class="attr-sub">星主的六项基础属性决定战斗节奏，主角心法则是独立的特殊伤害体系</div>
+
+      <div class="star-section-title">基础属性</div>
+      <div class="star-grid">
+        <div class="star-item" style="--c:#4FC3F7">
+          <div class="star-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg></div>
+          <div class="star-content"><div class="star-name">速度</div><div class="star-desc">影响主角在战斗中的<em class="hl">行动顺序</em>。</div></div>
+        </div>
+        <div class="star-item" style="--c:#FF6B6B">
+          <div class="star-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5 3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/></svg></div>
+          <div class="star-content"><div class="star-name">攻击</div>
+            <div class="star-desc">影响攻击时造成的伤害。
+              <div class="star-formula">主角攻击 = 上阵幻灵的平均攻击 × (1 + 主角攻击加成)</div>
+              <div class="star-note">不同玩法上阵的幻灵不同，属性不同均会导致当次战斗主角攻击的不同。</div>
+            </div>
+          </div>
+        </div>
+        <div class="star-item" style="--c:#FFB84D">
+          <div class="star-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1.5" x2="12" y2="4.5"/><line x1="12" y1="19.5" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="4.5" y2="12"/><line x1="19.5" y1="12" x2="22.5" y2="12"/><line x1="4.6" y1="4.6" x2="6.7" y2="6.7"/><line x1="17.3" y1="17.3" x2="19.4" y2="19.4"/><line x1="4.6" y1="19.4" x2="6.7" y2="17.3"/><line x1="17.3" y1="6.7" x2="19.4" y2="4.6"/></svg></div>
+          <div class="star-content"><div class="star-name">暴击率</div><div class="star-desc">影响攻击时发生<em class="hl">暴击的概率</em>。</div></div>
+        </div>
+        <div class="star-item" style="--c:#FF7EB6">
+          <div class="star-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l1.9 4.9 4.9-1.9-1.9 4.9 4.9 1.9-4.9 1.9 1.9 4.9-4.9-1.9-1.9 4.9-1.9-4.9-4.9 1.9 1.9-4.9-4.9-1.9 4.9-1.9-1.9-4.9 4.9 1.9z"/></svg></div>
+          <div class="star-content"><div class="star-name">暴击伤害</div><div class="star-desc">影响攻击发生暴击时<em class="hl">造成的伤害</em>。</div></div>
+        </div>
+        <div class="star-item" style="--c:#B98CE8">
+          <div class="star-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><line x1="12" y1="1.5" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22.5" y2="12"/><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/></svg></div>
+          <div class="star-content"><div class="star-name">效果命中</div><div class="star-desc">影响<em class="hl">施加负面效果、推条、驱散正面效果</em>时命中的概率。</div></div>
+        </div>
+        <div class="star-item" style="--c:#7ED957">
+          <div class="star-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/></svg></div>
+          <div class="star-content"><div class="star-name">命中率</div><div class="star-desc">影响发动攻击时<em class="hl">命中的概率</em>。</div></div>
+        </div>
+      </div>
+
+      <div class="star-section-title">主角心法</div>
+      <div class="star-special" style="--c:#c9a84c">
+        <div class="star-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.8l2.5 6.4 6.7 2.3-6.7 2.3L12 19.2l-2.5-6.4L2.8 10.5l6.7-2.3z"/><circle cx="12" cy="10.5" r="1.6" fill="#1a1d27"/></svg></div>
+        <div class="star-content">
+          <div class="star-name">心法攻击 · 特殊伤害类型</div>
+          <div class="star-desc">主角心法攻击是特殊的伤害类型，<em class="hl">能暴击</em>，但<em class="hl-warn">不会触发伤害分摊、各种攻击/受击相关的触发效果</em>。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="star-panel">
+      <div class="attr-panel-head"><h2>幻灵属性说明</h2></div>
+      <div class="attr-sub">九大基础属性共同决定幻灵的生存、输出、控制与联动能力</div>
+
+      <div class="star-section-title">幻灵基础属性</div>
+      <div class="star-grid">
+        <div class="star-item" style="--c:#FF6B7A">
+          <div class="star-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></div>
+          <div class="star-content"><div class="star-name">生命</div><div class="star-desc">影响幻灵<em class="hl">存活状态</em>，生命值为 0 时幻灵死亡。</div></div>
+        </div>
+        <div class="star-item" style="--c:#FF6B6B">
+          <div class="star-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5 3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/></svg></div>
+          <div class="star-content"><div class="star-name">攻击</div><div class="star-desc">影响攻击时造成的伤害。</div></div>
+        </div>
+        <div class="star-item" style="--c:#5B9BD5">
+          <div class="star-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z"/></svg></div>
+          <div class="star-content"><div class="star-name">防御</div><div class="star-desc">影响被攻击时<em class="hl">受到的伤害</em>。</div></div>
+        </div>
+        <div class="star-item" style="--c:#4FC3F7">
+          <div class="star-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg></div>
+          <div class="star-content"><div class="star-name">速度</div><div class="star-desc">影响幻灵战斗中的<em class="hl">行动顺序</em>。</div></div>
+        </div>
+        <div class="star-item" style="--c:#FFB84D">
+          <div class="star-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1.5" x2="12" y2="4.5"/><line x1="12" y1="19.5" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="4.5" y2="12"/><line x1="19.5" y1="12" x2="22.5" y2="12"/><line x1="4.6" y1="4.6" x2="6.7" y2="6.7"/><line x1="17.3" y1="17.3" x2="19.4" y2="19.4"/><line x1="4.6" y1="19.4" x2="6.7" y2="17.3"/><line x1="17.3" y1="6.7" x2="19.4" y2="4.6"/></svg></div>
+          <div class="star-content"><div class="star-name">暴击率<span class="star-max">最高 100%</span></div><div class="star-desc">影响攻击时发生暴击的概率。</div></div>
+        </div>
+        <div class="star-item" style="--c:#FF7EB6">
+          <div class="star-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l1.9 4.9 4.9-1.9-1.9 4.9 4.9 1.9-4.9 1.9 1.9 4.9-4.9-1.9-1.9 4.9-1.9-4.9-4.9 1.9 1.9-4.9-4.9-1.9 4.9-1.9-1.9-4.9 4.9 1.9z"/></svg></div>
+          <div class="star-content"><div class="star-name">暴击伤害<span class="star-max">最高 320%</span></div><div class="star-desc">影响攻击发生暴击时造成的伤害。</div></div>
+        </div>
+        <div class="star-item" style="--c:#B98CE8">
+          <div class="star-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><line x1="12" y1="1.5" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22.5" y2="12"/><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/></svg></div>
+          <div class="star-content"><div class="star-name">效果命中</div><div class="star-desc">影响施加<em class="hl">负面效果、推条、驱散正面效果</em>时命中的概率。</div></div>
+        </div>
+        <div class="star-item" style="--c:#7ED957">
+          <div class="star-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z"/><path d="M9 12l2 2 4-4"/></svg></div>
+          <div class="star-content"><div class="star-name">效果抗性</div><div class="star-desc">影响被施加<em class="hl">负面效果、被推条、被驱散正面效果</em>时抵抗的概率。</div></div>
+        </div>
+        <div class="star-item" style="--c:#F0A04B">
+          <div class="star-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="12" r="5"/><circle cx="16" cy="12" r="5"/></svg></div>
+          <div class="star-content"><div class="star-name">夹击率<span class="star-max">最高 35%</span></div><div class="star-desc">幻灵发动普攻后，其他友方会根据夹击率进行一次<em class="hl">「夹击」</em>。</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="star-panel">
+      <div class="attr-panel-head"><h2>攻击判定规则说明</h2></div>
+      <div class="attr-sub">使用攻击技能时，根据攻击者和目标的基础属性判定是否发生闪避、暴击</div>
+      <div class="star-grid">
+        <div class="star-item" style="--c:#4FC3F7">
+          <div class="star-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z"/><path d="M4.5 4.5l15 15"/></svg></div>
+          <div class="star-content">
+            <div class="star-name">闪避</div>
+            <div class="star-desc">
+              使用技能时，根据<span class="rule-formula">[目标的闪避率 − 攻击者的命中率]</span>进行判定是否发生闪避。
+              <div class="rule-note">发生闪避时，伤害降低 <em class="hl-warn">30%</em>，<em class="hl-warn">不会发生暴击</em>和<em class="hl-warn">部分技能效果</em>。</div>
+            </div>
+          </div>
+        </div>
+        <div class="star-item" style="--c:#FFB84D">
+          <div class="star-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg></div>
+          <div class="star-content">
+            <div class="star-name">暴击</div>
+            <div class="star-desc">
+              技能命中后，根据<span class="rule-formula">[攻击者的暴击率 − 目标的抗爆率]</span>判定是否发生暴击。
+              <div class="rule-note">发生暴击后，根据攻击者的<em class="hl">暴击伤害</em>等比提升伤害，会有<em class="hl-warn">特殊的伤害字体颜色提示信息</em>。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="star-panel">
+      <div class="attr-panel-head"><h2>效果命中与抗性说明</h2></div>
+      <div class="attr-sub">对目标附加负面效果时，需经过两层判定 —— 先看技能触发，再看效果命中</div>
+      <div class="judge-flow">
+        <div class="judge-step" style="--c:#B98CE8">
+          <div class="judge-num">1</div>
+          <div><div class="judge-title">技能触发判定</div><div class="judge-desc">根据技能本身的<em class="hl">[触发概率]</em>判定是否触发。</div></div>
+        </div>
+        <div class="judge-arrow">→</div>
+        <div class="judge-step" style="--c:#FF8A5C">
+          <div class="judge-num">2</div>
+          <div><div class="judge-title">效果命中判定</div><div class="judge-desc">若第一步判定<em class="hl">触发成功</em>，则根据效果命中判定是否发动。</div></div>
+        </div>
+      </div>
+      <div class="formula-final">
+        <div class="ff-label">效果命中概率公式</div>
+        <div class="ff-eq">效果命中概率 = 100% + 施加者效果命中 − 被施加目标效果抗性</div>
+        <div class="ff-cap">最终结果 <b>最高不超过 85%</b></div>
+      </div>
+    </div>
+
+    <div class="card-list" id="list-basics"></div>
+  </div>
+
+  <!-- ─────────── 幻灵图鉴 ─────────── -->
+  <div class="panel" id="panel-heroes">
+    <div class="panel-header">
+      <div class="panel-title">幻灵图鉴</div>
+      <div class="panel-actions">
+        <button class="btn btn-primary" onclick="addHero()">＋ 新增幻灵</button>
+      </div>
+    </div>
+
+    <div class="hero-filters" id="heroFilters" style="display:none"></div>
+
+    <div class="hero-table-wrap" id="heroTableWrap" style="display:none">
+      <table class="hero-table">
+        <thead>
+          <tr>
+            <th>幻灵名称</th>
+            <th>幻灵属性</th>
+            <th>幻灵职业</th>
+            <th>装备推荐</th>
+            <th>神器推荐</th>
+            <th>附加备注</th>
+            <th class="th-action">操作</th>
+          </tr>
+        </thead>
+        <tbody id="heroTableBody"></tbody>
+      </table>
+    </div>
+
+    <div class="hero-table-empty" id="heroEmpty">
+      <div class="ete-big">📖</div>
+      <div>还没有添加任何幻灵</div>
+      <div class="ete-tip">点击右上角「＋ 新增幻灵」开始构建你的幻灵图鉴</div>
+    </div>
+  </div>
+
+  <!-- ─────────── 装备图鉴 ─────────── -->
+  <div class="panel" id="panel-equip">
+    <div class="panel-header">
+      <div class="panel-title">装备图鉴</div>
+      <div class="panel-actions"><button class="btn btn-primary" onclick="addCard('equip')">＋ 新增条目</button></div>
+    </div>
+    <div class="card-list" id="list-equip"></div>
+  </div>
+
+  <!-- ─────────── 神器图鉴 ─────────── -->
+  <div class="panel" id="panel-artifacts">
+    <div class="panel-header">
+      <div class="panel-title">神器图鉴</div>
+      <div class="panel-actions"><button class="btn btn-primary" onclick="addCard('artifacts')">＋ 新增条目</button></div>
+    </div>
+    <div class="card-list" id="list-artifacts"></div>
+  </div>
+
+  <!-- ─────────── 活动讲解 ─────────── -->
+  <div class="panel" id="panel-events">
+    <div class="panel-header">
+      <div class="panel-title">活动讲解</div>
+      <div class="panel-actions"><button class="btn btn-primary" onclick="addCard('events')">＋ 新增条目</button></div>
+    </div>
+    <div class="card-list" id="list-events"></div>
+  </div>
+
+  <!-- ─────────── 问鼎攻略 ─────────── -->
+  <div class="panel" id="panel-pvp">
+    <div class="panel-header">
+      <div class="panel-title">问鼎攻略</div>
+      <div class="panel-actions"><button class="btn btn-primary" onclick="addCard('pvp')">＋ 新增条目</button></div>
+    </div>
+    <div class="card-list" id="list-pvp"></div>
+  </div>
+
+</div>
+
+<!-- ═══════════ 幻灵编辑模态框 ═══════════ -->
+<div class="modal-overlay" id="heroModal">
+  <div class="modal-panel">
+    <div class="modal-head">
+      <h3 id="heroModalTitle">编辑幻灵</h3>
+      <button class="modal-close" onclick="closeHeroModal()" title="关闭">×</button>
+    </div>
+    <div class="modal-body" id="heroModalBody"></div>
+    <div class="modal-foot">
+      <div class="foot-left">
+        <button class="btn btn-danger" id="heroDeleteBtn"
+                onclick="deleteHeroFromModal()" style="display:none">删除幻灵</button>
+      </div>
+      <button class="btn" onclick="closeHeroModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveHero()">保存幻灵</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ 状态栏 ═══════════ -->
+<div class="status-bar">
+  <span id="statusText">就绪</span>
+  <span style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+    <span id="cloudStatus" style="font-size:11.5px;padding:2px 10px;border-radius:10px;border:1px solid var(--border);color:var(--text-dim);">⚪ 本地模式</span>
+    <button class="btn btn-sm" onclick="exportData()">导出备份</button>
+    <button class="btn btn-sm" onclick="document.getElementById('importFile').click()">导入备份</button>
+    <button class="btn btn-sm btn-danger" onclick="resetData()">重置为默认</button>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+  </span>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════
+   ⚙ 云端同步配置
+   ═══════════════════════════════════════════ */
+const CLOUD = {
+  url: (window.CLOUD_CONFIG && window.CLOUD_CONFIG.SUPABASE_URL || '').trim(),
+  key: (window.CLOUD_CONFIG && window.CLOUD_CONFIG.SUPABASE_ANON_KEY || '').trim(),
+  docId: (window.CLOUD_CONFIG && window.CLOUD_CONFIG.DOC_ID) || 'main'
+};
+function isCloudEnabled() { return !!(CLOUD.url && CLOUD.key); }
+
+let cloudSyncTimer = null;
+let cloudPollTimer = null;
+let isSyncing = false;
+let lastSyncedAt = null;
+
+/* ═══════════════════════════════════════════
+   常量定义
+   ═══════════════════════════════════════════ */
+const ELEMENT_COLOR = {
+  '雷': '#7ED957', '炎': '#FF4C4C', '寒': '#4FC3F7',
+  '光': '#FFD93D', '暗': '#7B4FA6'
+};
+const ELEMENTS = ['雷', '炎', '寒', '光', '暗'];
+const JOBS = ['武曲', '霸魁', '化识', '异士', '素问'];
+
+const JOB_SYMBOL = {
+  '武曲': '<path d="M14.5 17.5 3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/>',
+  '霸魁': '<path d="M12 2L4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z"/>',
+  '化识': '<circle cx="12" cy="5" r="3"/><line x1="12" y1="8" x2="12" y2="21"/><path d="M8 11 L12 13 L16 11"/>',
+  '异士': '<path d="M2 12 Q12 4 22 12 Q12 20 2 12 Z"/><circle cx="12" cy="12" r="3"/>',
+  '素问': '<path d="M12 21 C7 18 5 14 5 10 C7 12 9 13 12 14 C15 13 17 12 19 10 C19 14 17 18 12 21 Z"/><path d="M12 14 C10 11 10 8 12 5 C14 8 14 11 12 14 Z"/>'
+};
+
+const ELEMENT_ICON_INNER = {
+  '雷': '<path d="M13 2L4 14h6l-1 8 9-12h-6z" fill="currentColor"/>',
+  '炎': '<path d="M12 2c2 4 7 6 7 11a7 7 0 1 1-14 0c0-5 5-7 7-11z" fill="currentColor"/>',
+  '寒': '<g stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></g>',
+  '光': '<circle cx="12" cy="12" r="5" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></g>',
+  '暗': '<path d="M20 14.5A8 8 0 1 1 9.5 4 6.5 6.5 0 0 0 20 14.5z" fill="currentColor"/>'
+};
+
+const EQUIP_SETS = ['攻击','防御','生命','吸血','暴击','暴击伤害','抵抗','命中','速度','穿透','守护','反击','腐蚀','阻挡','潜能'];
+const SHOE_OPTIONS = ['速度','生命加成','攻击加成','防御加成'];
+const NECK_OPTIONS = ['暴击','暴击伤害','生命加成','攻击加成','防御加成'];
+const RING_OPTIONS = ['效果命中','效果抵抗','生命加成','攻击加成','防御加成'];
+
+const DEFAULT_ARTIFACTS = {
+  '通用': ['赤焰日轮','白玉弯刀','番天印','山河社稷图'],
+  '武曲': ['天罡宝剑','降魔杵','菩提锡杖','混元金斗','太仓枪','燎原锤','太阳神石','恒岳天书','携芳'],
+  '霸魁': ['九州鼎','丈魂尺','补天石','伏羲琴','九龙神火罩','凤血战鼓','息雷'],
+  '化识': ['天丝灵纱','太极图','建木翎炎','五火七禽扇','避雷杖','玄女羽衣','九彩灵枝','御神幡','吉光铃'],
+  '异士': ['聚灵簪','北冥玄珠','妙法灯','焚天斗','玄涟剑','日月轮'],
+  '素问': ['广寒琼玉','三宝玉如意','玲珑塔','轮回境']
+};
+
+const DEFAULT_HEROES = [];
+
+const DEFAULT_DATA = {
+  basics: [
+    { title: '开荒核心路线', body: '预约上线领史诗幻灵 → 每日登录收任务礼 → 幻灵配阵与养成 → 主线推进至第三章解锁全部功能 → 资源规划与集中培养。\n\n通关主线可获得约200抽资源（155普通唤灵石+35神火鉴+10限定唤灵石），是前期最重要的资源来源。' },
+    { title: '资源规划原则', body: '① 集中培养：优先 1主C + 1辅助 + 1坦克，避免资源分散导致战力不足。\n② 扫荡已通关秘境副本，用3倍速节省时间。\n③ 橙装优先给主C刷暴击率/攻击词条，高输出是快速推图的关键。\n④ 每日必做：签到、日常任务、公会商店兑换。' },
+    { title: '新手常见误区', body: '✘ 平均培养所有幻灵 → 资源枯竭，主力战力不足\n✘ 忽略元素克制强行硬推 → 效率低下\n✘ 前期乱抽卡池 → 应优先后羿限定池和心愿池\n✘ 不加入公会 → 错过大量免费资源' }
+  ],
+  heroes: DEFAULT_HEROES,
+  equip: [
+    { title: '异木幽林 · 基础套装', body: '副本产出：攻击套装、生命套装、防御套装、吸血套装\n\n攻击套装（4件套）：输出核心，提升攻击力。\n生命套装（2件套）：肉盾/治疗适用。\n防御套装（2件套）：肉盾/治疗适用。\n吸血套装（4件套）：输出可用，目前泛用性一般。' },
+    { title: '腾雾之巅 · 进阶套装', body: '副本产出：暴击套装、爆伤套装、命中套装、抵抗套装\n\n暴击套装（2件套）：万能套装，几乎所有输出都需要。\n爆伤套装（4件套）：追求极限输出首选。\n命中套装（2件套）：功能型角色（姜子牙、涂山攸女等）。\n抵抗套装（2件套）：PVP向，功能性辅助/治疗/肉盾。' },
+    { title: '坠天神墟 · 高阶套装', body: '副本产出：速度套装、穿透套装、反击套装、守护套装\n\n速度套装（4件套）：PVP全员适配，抢先手核心。\n穿透套装（2件套）：单体攻击才触发，单体输出/夹击队适用。\n反击套装（4件套）：35%概率反击，概率不稳定，慎选。\n守护套装（4件套）：多个角色只生效一个，肉盾/治疗用。' },
+    { title: '主流搭配方案', body: '输出型：攻击4 + 暴击2 / 爆伤4 + 暴击2 / 速度4 + 暴击2（PVP）\n拉条型：速度4 + 抵抗2散件\n辅助型：速度4 + 命中2\n肉盾型：守护4 + 生命2\n治疗型：生命4 + 能量2 或 速度4 + 生命2\n\n暴击套装是万能2件套，暴击率难满时优先用它凑2件套效果。' }
+  ],
+  artifacts: [
+    { title: '通用 T1 神器', body: '白玉弯刀：增加命中率和提升伤害，适合需要命中的输出。\n\n赤焰日轮：提升攻击、暴击率和暴击伤害，4回合叠满。星宫商店每月可兑换，适合暴击爆伤流输出。' },
+    { title: '武曲专属神器', body: '太苍枪（陆吾专属） / 燎原锤（女歧专属）\n\nT1 降魔杵：提升攻击力，血量低于一半时附带攻击回血。钟馗、后羿、女歧可用。\n\nT1 天罡宝剑：提升闪避率和伤害，生命越少伤害越高。巴蛇、杨戬、哪吒、陆吾可用。' },
+    { title: '霸魁专属神器', body: '九龙神火罩（九渊龙女专属）\n\nT1 九洲鼎：提升全体抗性，自身和身后单位获得护罩和效果阻挡。霸魁通用，应对控制阵容。\n\nT1 伏羲琴：提升全体防御，降低受到的暴击伤害。应对直伤阵容。' },
+    { title: '异士与素问神器', body: '异士 T1 妙法灯：提升效果命中，造成伤害概率附加眩晕。控制类幻灵通用，鲲鹏也可携带。\n\n异士 T1.5 北冥玄珠：开局获得1次效果抵抗，使用非攻技能后同排队友获护盾。鲲鹏、白泽适用。\n\n素问 T1 三宝玉如意：提升抗性，非攻技能后净化全体1个负面并回血。素问通用型神器。' },
+    { title: '化识专属神器', body: 'T1 天丝灵砂：使用群体伤害时触发间接伤害。西施、羲和等群攻输出适用。\n\nT1.5 建木翎炎：提升攻击力，开局高额暴击率和爆伤（每次攻击后降低）。聂小倩、长离等开局爆发群攻适用。\n\nT1.5 避雷杖：提升命中，触发额外攻击/反击/被动后附加贯穿伤害。文鳐鱼、白素贞、金乌、山鬼适用。' },
+    { title: '绑定推荐速查', body: '后羿 → 番天印（极致输出）\n嬴政 → 禅心木鱼（全队暴伤减免）\n貔貅 → 补天石（伤害分摊，公会商店可换）\n桃姬/嫦娥 → 广寒玉（治疗强化）\n聂小倩 → 妙法灯（速度+眩晕先手）\n鲲鹏 → 北冥玄珠（拉条强化）\n西施 → 妙法灯（控制效果）' }
+  ],
+  events: [
+    { title: '妙境迷宫', body: '玩法核心：进入迷宫消耗妙境罗盘（大荒冒险获取），选择幻灵组队探险，目标是探索度达到100%。\n\n关键要点：\n· 迷宫包含宝箱、怪物和机关三类元素。\n· 幻灵行动消耗行动力，地图上有隐藏恢复行动力的点位。\n· 可以随时保存进度退出，下次继续。\n· 根据怪物特性灵活搭配输出/辅助/坦克型幻灵。\n\n奖励：当前阶段急需的资源与装备。' },
+    { title: '山海传奇 · 白泽现世', body: '限时剧情活动，通过关键抉择推动进程，不同选择影响成就获取。\n\n关键抉择参考：\n· 遇白泽 → 选「不理会」（拒绝会失败）\n· 斩角 → 获得土蝼之角成就\n· 刺穿视肉 → 获得视肉之核成就\n· 杀死诸犍 → 获得诸犍之睛成就\n· 出声招呼 → 获得笔走龙蛇成就\n· 不杀狍鸮 → 获得狍鸮之皮成就' },
+    { title: '后羿射日 · 限时活动', body: '属于「山海传奇」系列限时活动，通过一系列剧情抉择推动进程。\n\n核心机制：每次选择叠加攻击属性成长。\n关键选择：遇到阻拦时选「潜伏」，若选「阻拦」则直接触发失败结局。\n\n活动奖励通常包含限定唤灵石、传说幻灵碎片等稀有资源。' },
+    { title: '日常活动优先级', body: '每日必做：\n① 签到领取免费奖励\n② 完成日常任务获取活跃度宝箱\n③ 扫荡已通关秘境副本（3倍速）\n④ 公会商店兑换补天石等稀有道具\n⑤ 参与限时活动（如有）\n\n每周必做：\n· 问鼎山海（匹配时段：工作日18:00-22:00，周末10:00-22:00）\n· 检查星宫商店兑换（赤焰日轮等）' }
+  ],
+  pvp: [
+    { title: '问鼎山海 · 玩法规则', body: '5V5对战模式，根据等级积分匹配，分为自由选人和互斥选人两个阶段。\n\n自由选人（低分段）：双方各禁用1个幻灵，剩余幻灵自由搭配。\n\n互斥选人（2400分以上）：\n① 预先禁用阶段：轮流禁用1个幻灵\n② 幻灵选择阶段：交替选人（先手1-2-2-1模式），各选6名\n③ 最终禁用阶段：从对方6名中禁用1名，剩余5名出战\n\n一名幻灵仅可被一方选择，先手方由系统随机确定。' },
+    { title: '禁选策略核心', body: '禁选优先级判断：\n· 如果对方核心是金乌灼烧队 → 优先禁旱魃（破坏联动）\n· 如果己方核心怕嫦娥 → 开局预先禁掉嫦娥\n· 对方禁掉你的核心时 → 灵活变阵，用龙女等万金油主C替代\n\n核心原则：预判对方的阵容体系，优先禁用其联动核心而非单卡强度最高的幻灵。' },
+    { title: '推荐阵容体系', body: '负面队：西施（推条+负面）+ 旱魃（群攻挂负面）+ 嫦娥（保人）+ 猴子/杨戬（双单体输出）\n\n灼烧队：金乌（灼烧核心）+ 旱魃（联动+衰弱）+ 辅助 + 坦克\n\n低配阵容（19星参考）：小倩 + 天犬 + 西施 + 狐狸 + 奔波儿霸\n· 小倩：4速+2暴击，速度鞋，1速\n· 狐狸：4速+2命中，2速，带妙法灯\n· 西施：4速+2命中，3速\n· 天犬：4暴击+2穿透\n· 奔波儿霸：6生命，全生命主词条' },
+    { title: '实战要点', body: '① 速度决定出手顺序，拉条角色（鲲鹏）优先抢一速。\n② 能量循环：控制好回合技和能量技的释放节奏，避免能量浪费。\n③ 驱散时机：在敌方关键增益挂上后立即驱散（如刑天狂战）。\n④ 灵活变阵：至少准备2套完整配队应对不同禁选局面。\n⑤ 针对禁疗：面对奶妈体系时，带禁疗角色可大幅削弱对方续航。\n\n赛季说明：每赛季持续1个月，排名奖励通过邮件发放。' }
+  ]
+};
+
+/* ═══════════════════════════════════════════
+   状态
+   ═══════════════════════════════════════════ */
+const STORAGE_KEY = 'zjsh_guide_data_v1';
+let guideData = {};
+let editingPanels = new Set();
+let heroEditorState = null;
+let heroFilterJob = 'all';
+let heroFilterElement = 'all';
+
+/* ═══════════════════════════════════════════
+   图标 SVG
+   ═══════════════════════════════════════════ */
+function heroIconSVG(element, job, size = 34) {
+  const color = ELEMENT_COLOR[element] || '#8b90a4';
+  const symbol = JOB_SYMBOL[job] || '';
+  return `
+    <svg viewBox="0 0 48 48" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="24" cy="24" r="22" fill="${color}" fill-opacity="0.16" stroke="${color}" stroke-width="2" stroke-opacity="0.9"/>
+      <circle cx="24" cy="24" r="15" fill="${color}" fill-opacity="0.10"/>
+      <g transform="translate(12,12)" fill="none" stroke="${color}" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round">${symbol}</g>
+    </svg>
+  `;
+}
+function elementTagSVG(element, size = 12) {
+  const color = ELEMENT_COLOR[element] || '#888';
+  const inner = ELEMENT_ICON_INNER[element] || '';
+  return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" style="color:${color}">${inner}</svg>`;
+}
+function jobTagSVG(job, size = 12) {
+  const symbol = JOB_SYMBOL[job] || '';
+  return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none"
+    stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${symbol}</svg>`;
+}
+
+/* ═══════════════════════════════════════════
+   ☁ 云端同步
+   ═══════════════════════════════════════════ */
+function setCloudStatus(state, text) {
+  const el = document.getElementById('cloudStatus');
+  if (!el) return;
+  const colors = {
+    local:   ['var(--text-dim)', '⚪ 本地模式'],
+    syncing: ['var(--cloud)', '🔄 同步中…'],
+    synced:  ['var(--success)', '🟢 云端已同步'],
+    updated: ['var(--cloud)', '☁ 云端已更新'],
+    error:   ['var(--danger)', '🔴 同步失败'],
+    loading: ['var(--cloud)', '☁ 加载云端中…']
+  };
+  const [c, t] = colors[state] || colors.local;
+  el.style.color = c;
+  el.style.borderColor = c;
+  el.textContent = text || t;
+}
+
+async function fetchFromCloud() {
+  if (!isCloudEnabled()) return null;
+  const url = `${CLOUD.url}/rest/v1/guide_data?id=eq.${CLOUD.docId}&select=content,updated_at`;
+  const res = await fetch(url, {
+    headers: {
+      'apikey': CLOUD.key,
+      'Authorization': `Bearer ${CLOUD.key}`,
+      'Cache-Control': 'no-cache'
+    }
+  });
+  if (!res.ok) throw new Error('读取云端失败: HTTP ' + res.status);
+  const rows = await res.json();
+  if (!rows || rows.length === 0) return null;
+  return { content: rows[0].content, updatedAt: rows[0].updated_at };
+}
+
+async function saveToCloud(data) {
+  if (!isCloudEnabled()) return;
+  if (isSyncing) return;
+  isSyncing = true;
+  setCloudStatus('syncing');
+  try {
+    const url = `${CLOUD.url}/rest/v1/guide_data`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'apikey': CLOUD.key,
+        'Authorization': `Bearer ${CLOUD.key}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'resolution=merge-duplicates,return=minimal'
+      },
+      body: JSON.stringify({
+        id: CLOUD.docId,
+        content: data,
+        updated_at: new Date().toISOString()
+      })
+    });
+    if (!res.ok) throw new Error('保存失败: HTTP ' + res.status);
+    lastSyncedAt = new Date().toISOString();
+    setCloudStatus('synced');
+  } catch (e) {
+    console.error('[cloud save]', e);
+    setCloudStatus('error');
+    throw e;
+  } finally {
+    isSyncing = false;
+  }
+}
+
+/* 判断用户当前是否正在编辑 —— 用于轮询时避免冲突 */
+function isUserEditing() {
+  if (document.getElementById('heroModal').classList.contains('show')) return true;
+  if (editingPanels.size > 0) return true;
+  const ae = document.activeElement;
+  if (ae && (ae.isContentEditable || ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA')) return true;
+  return false;
+}
+
+function startCloudPolling() {
+  if (cloudPollTimer) clearInterval(cloudPollTimer);
+  cloudPollTimer = setInterval(async () => {
+    if (!isCloudEnabled()) return;
+    if (document.hidden) return;
+    if (isSyncing) return;
+    if (isUserEditing()) return;
+
+    try {
+      const remote = await fetchFromCloud();
+      if (!remote) return;
+      // 判断是否有变化
+      const remoteStr = JSON.stringify(remote.content);
+      const localStr = JSON.stringify(guideData);
+      if (remoteStr !== localStr) {
+        // 云端有新数据
+        guideData = remote.content;
+        ensureDataShape();
+        localStorage.setItem(STORAGE_KEY, remoteStr);
+        renderAll();
+        renderHeroFilters();
+        lastSyncedAt = remote.updatedAt;
+        setCloudStatus('updated');
+        showToast('☁ 已同步其他用户的更新', 'cloud');
+        // 短暂显示后回到 synced
+        setTimeout(() => setCloudStatus('synced'), 3000);
+      }
+    } catch (e) {
+      // 静默失败
+      console.warn('[cloud poll]', e.message);
+    }
+  }, 8000);
+}
+
+function ensureDataShape() {
+  Object.keys(DEFAULT_DATA).forEach(k => {
+    if (k === 'heroes') {
+      if (!Array.isArray(guideData.heroes)) guideData.heroes = [];
+    } else if (!Array.isArray(guideData[k])) {
+      guideData[k] = JSON.parse(JSON.stringify(DEFAULT_DATA[k]));
+    }
+  });
+  if (!guideData.artifactsByCategory || typeof guideData.artifactsByCategory !== 'object') {
+    guideData.artifactsByCategory = JSON.parse(JSON.stringify(DEFAULT_ARTIFACTS));
+  } else {
+    Object.keys(DEFAULT_ARTIFACTS).forEach(k => {
+      if (!Array.isArray(guideData.artifactsByCategory[k])) {
+        guideData.artifactsByCategory[k] = DEFAULT_ARTIFACTS[k].slice();
+      }
+    });
+  }
+}
+
+/* ═══════════════════════════════════════════
+   数据管理
+   ═══════════════════════════════════════════ */
+function loadLocalData() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  let ok = false;
+  if (saved) {
+    try {
+      guideData = JSON.parse(saved);
+      ok = true;
+    } catch (e) { ok = false; }
+  }
+  if (!ok) {
+    guideData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+  }
+  ensureDataShape();
+
+  // 一次性迁移：清空旧版本内置的默认幻灵
+  if (!guideData._heroesClearedV2) {
+    guideData.heroes = [];
+    guideData._heroesClearedV2 = true;
+    saveData(true);
+  }
+}
+
+function saveData(silent) {
+  // 1) 始终保存到本地
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(guideData));
+
+  if (!silent) {
+    setStatus('✓ 已保存到本地');
+    showToast('保存成功');
+  }
+
+  // 2) 如果启用了云端，防抖推送到云端
+  if (isCloudEnabled()) {
+    clearTimeout(cloudSyncTimer);
+    cloudSyncTimer = setTimeout(() => {
+      saveToCloud(guideData).catch(() => {});
+    }, 700);
+  }
+}
+
+function setStatus(text) {
+  const el = document.getElementById('statusText');
+  el.textContent = text;
+  el.className = text.includes('✓') ? 'saved' : '';
+}
+
+/* ═══════════════════════════════════════════
+   筛选栏
+   ═══════════════════════════════════════════ */
+function initHeroFilters() {
+  const filters = document.getElementById('heroFilters');
+  if (!filters) return;
+
+  const jobBtns = JOBS.map(j => `
+    <button type="button" class="filter-btn" data-filter-type="job" data-value="${j}"
+            style="--fc:#c9a84c"
+            onclick="setHeroFilter('job','${j}')">
+      ${jobTagSVG(j, 13)}
+      <span>${j}</span>
+    </button>
+  `).join('');
+
+  const elemBtns = ELEMENTS.map(e => `
+    <button type="button" class="filter-btn" data-filter-type="element" data-value="${e}"
+            style="--fc:${ELEMENT_COLOR[e]}"
+            onclick="setHeroFilter('element','${e}')">
+      ${elementTagSVG(e, 13)}
+      <span>${e}</span>
+    </button>
+  `).join('');
+
+  filters.innerHTML = `
+    <div class="filter-group">
+      <div class="filter-label">职业筛选</div>
+      <div class="filter-btns">
+        <button type="button" class="filter-btn active" data-filter-type="job" data-value="all"
+                style="--fc:#c9a84c" onclick="setHeroFilter('job','all')">
+          <span>全部</span>
+        </button>
+        ${jobBtns}
+      </div>
+    </div>
+    <div class="filter-group">
+      <div class="filter-label">属性筛选</div>
+      <div class="filter-btns">
+        <button type="button" class="filter-btn active" data-filter-type="element" data-value="all"
+                style="--fc:#c9a84c" onclick="setHeroFilter('element','all')">
+          <span>全部</span>
+        </button>
+        ${elemBtns}
+      </div>
+    </div>
+    <div class="filter-summary">
+      <div class="fs-count" id="heroFilterCount">—</div>
+      <button type="button" class="filter-reset-btn" onclick="resetHeroFilters()">重置筛选</button>
+    </div>
+  `;
+}
+
+function setHeroFilter(type, value) {
+  if (type === 'job') heroFilterJob = value;
+  else if (type === 'element') heroFilterElement = value;
+  renderHeroFilters();
+  renderHeroTable();
+}
+
+function resetHeroFilters() {
+  heroFilterJob = 'all';
+  heroFilterElement = 'all';
+  renderHeroFilters();
+  renderHeroTable();
+}
+
+function renderHeroFilters() {
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    const t = btn.dataset.filterType;
+    const v = btn.dataset.value;
+    let active = false;
+    if (t === 'job') active = (heroFilterJob === v);
+    else if (t === 'element') active = (heroFilterElement === v);
+    btn.classList.toggle('active', active);
+  });
+}
+
+/* ═══════════════════════════════════════════
+   通用渲染
+   ═══════════════════════════════════════════ */
+function renderAll() {
+  renderHeroTable();
+  ['basics', 'equip', 'artifacts', 'events', 'pvp'].forEach(k => renderPanel(k));
+}
+
+function renderPanel(key) {
+  const listEl = document.getElementById('list-' + key);
+  if (!listEl) return;
+  const items = guideData[key] || [];
+
+  if (items.length === 0) {
+    listEl.innerHTML = '<div class="empty-tip">暂无内容，点击「＋ 新增条目」开始添加</div>';
+    return;
+  }
+
+  listEl.innerHTML = items.map((item, idx) => {
+    const cardId = key + '_' + idx;
+    const isEditing = editingPanels.has(cardId);
+    return `
+      <div class="card ${isEditing ? 'editing' : ''}" data-id="${cardId}">
+        <div class="card-title" contenteditable="${isEditing}"
+             data-key="${key}" data-idx="${idx}" data-field="title"
+             oninput="onEdit(this)">${escHtml(item.title)}</div>
+        <div class="card-body" contenteditable="${isEditing}"
+             data-key="${key}" data-idx="${idx}" data-field="body"
+             oninput="onEdit(this)">${escHtml(item.body)}</div>
+        <div class="card-footer">
+          ${isEditing
+            ? `<button class="btn btn-sm btn-primary" onclick="finishEdit('${cardId}')">完成</button>`
+            : `<button class="btn btn-sm" onclick="startEdit('${cardId}')">✎ 编辑</button>`}
+          <button class="btn btn-sm btn-danger" onclick="deleteCard('${key}', ${idx})">删除</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function escHtml(str) {
+  if (str === undefined || str === null) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function escAttr(str) {
+  if (str === undefined || str === null) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ═══════════════════════════════════════════
+   幻灵图鉴表格
+   ═══════════════════════════════════════════ */
+function renderHeroTable() {
+  const tbody = document.getElementById('heroTableBody');
+  const wrap = document.getElementById('heroTableWrap');
+  const empty = document.getElementById('heroEmpty');
+  const filters = document.getElementById('heroFilters');
+  const allHeroes = guideData.heroes || [];
+
+  if (allHeroes.length === 0) {
+    if (filters) filters.style.display = 'none';
+    wrap.style.display = 'none';
+    empty.style.display = 'block';
+    empty.innerHTML = `
+      <div class="ete-big">📖</div>
+      <div>还没有添加任何幻灵</div>
+      <div class="ete-tip">点击右上角「＋ 新增幻灵」开始构建你的幻灵图鉴</div>
+    `;
+    return;
+  }
+
+  if (filters) filters.style.display = '';
+
+  const filtered = allHeroes
+    .map((h, i) => ({ hero: h, originalIdx: i }))
+    .filter(({ hero: h }) => {
+      if (heroFilterJob !== 'all' && h.job !== heroFilterJob) return false;
+      if (heroFilterElement !== 'all' && h.element !== heroFilterElement) return false;
+      return true;
+    });
+
+  const countEl = document.getElementById('heroFilterCount');
+  if (countEl) {
+    const noFilter = (heroFilterJob === 'all' && heroFilterElement === 'all');
+    if (noFilter) {
+      countEl.innerHTML = `共 <b>${allHeroes.length}</b> 位幻灵`;
+    } else {
+      countEl.innerHTML = `显示 <b>${filtered.length}</b> / ${allHeroes.length} 位幻灵`;
+    }
+  }
+
+  if (filtered.length === 0) {
+    wrap.style.display = 'none';
+    empty.style.display = 'block';
+    empty.innerHTML = `
+      <div class="ete-big">🔍</div>
+      <div>没有符合当前筛选条件的幻灵</div>
+      <div class="ete-tip">尝试调整职业或属性筛选条件</div>
+      <button class="btn btn-sm" style="margin-top:14px" onclick="resetHeroFilters()">重置筛选</button>
+    `;
+    return;
+  }
+
+  wrap.style.display = '';
+  empty.style.display = 'none';
+
+  tbody.innerHTML = filtered.map(({ hero: h, originalIdx: idx }) => {
+    const color = ELEMENT_COLOR[h.element] || '#888';
+    const setStr = (h.sets && h.sets.length) ? h.sets.join(' / ') : '';
+    const parts = h.parts || {};
+    const partItems = [];
+    if (parts.shoe) partItems.push('鞋子·' + parts.shoe);
+    if (parts.neck) partItems.push('项链·' + parts.neck);
+    if (parts.ring) partItems.push('戒指·' + parts.ring);
+    const partStr = partItems.join('  ·  ');
+
+    const artifactCell = h.artifact
+      ? `<span class="art-name">${escHtml(h.artifact)}</span><span class="cat-tag">${escHtml(h.artifactCategory || '通用')}</span>`
+      : '<span class="empty">—</span>';
+    const noteCell = h.note ? escHtml(h.note) : '<span class="empty">—</span>';
+
+    return `
+      <tr style="--row-c:${color}" onclick="openHeroEditor(${idx})">
+        <td>
+          <div class="hero-name-cell">
+            <div class="hero-icon-sm">${heroIconSVG(h.element, h.job, 34)}</div>
+            <span class="hn-text">${escHtml(h.name || '未命名')}</span>
+          </div>
+        </td>
+        <td>
+          <span class="cell-tag" style="color:${color}">
+            ${elementTagSVG(h.element, 12)}
+            <span>${escHtml(h.element || '—')}</span>
+          </span>
+        </td>
+        <td>
+          <span class="cell-tag" style="color:#c9a84c">
+            ${jobTagSVG(h.job, 12)}
+            <span>${escHtml(h.job || '—')}</span>
+          </span>
+        </td>
+        <td>
+          <div class="cell-equip">
+            <div class="eq-line"><span class="eq-key">套装</span>
+              <span class="eq-val ${setStr ? '' : 'empty'}">${setStr ? escHtml(setStr) : '—'}</span></div>
+            <div class="eq-line"><span class="eq-key">部位</span>
+              <span class="eq-val ${partStr ? '' : 'empty'}">${partStr ? escHtml(partStr) : '—'}</span></div>
+          </div>
+        </td>
+        <td><div class="cell-artifact">${artifactCell}</div></td>
+        <td><div class="cell-note">${noteCell}</div></td>
+        <td class="td-action">
+          <button class="row-del-btn" title="删除此幻灵"
+                  onclick="event.stopPropagation(); deleteHero(${idx})">✕</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+/* ═══════════════════════════════════════════
+   幻灵编辑模态框
+   ═══════════════════════════════════════════ */
+function addHero() {
+  heroEditorState = {
+    idx: -1, isNew: true, artifactTab: '通用',
+    draft: {
+      id: 'hero_' + Date.now(),
+      name: '', element: '雷', job: '武曲',
+      sets: [], parts: { shoe: '', neck: '', ring: '' },
+      artifactCategory: '通用', artifact: '', note: ''
+    }
+  };
+  document.getElementById('heroModalTitle').textContent = '新增幻灵';
+  renderHeroEditor();
+  document.getElementById('heroModal').classList.add('show');
+}
+
+function openHeroEditor(idx) {
+  const hero = guideData.heroes[idx];
+  if (!hero) return;
+  heroEditorState = {
+    idx: idx, isNew: false,
+    artifactTab: hero.artifactCategory || '通用',
+    draft: JSON.parse(JSON.stringify(hero))
+  };
+  document.getElementById('heroModalTitle').textContent = '编辑幻灵 · ' + (hero.name || '未命名');
+  renderHeroEditor();
+  document.getElementById('heroModal').classList.add('show');
+}
+
+function closeHeroModal() {
+  document.getElementById('heroModal').classList.remove('show');
+  heroEditorState = null;
+}
+
+function renderHeroEditor() {
+  if (!heroEditorState) return;
+  const d = heroEditorState.draft;
+  const body = document.getElementById('heroModalBody');
+
+  const delBtn = document.getElementById('heroDeleteBtn');
+  if (delBtn) delBtn.style.display = heroEditorState.isNew ? 'none' : '';
+
+  const availCats = ['通用', d.job].filter(Boolean);
+  if (!availCats.includes(heroEditorState.artifactTab)) {
+    heroEditorState.artifactTab = '通用';
+  }
+  const currentCat = heroEditorState.artifactTab;
+  const artifactsForCat = (guideData.artifactsByCategory && guideData.artifactsByCategory[currentCat]) || [];
+
+  body.innerHTML = `
+    <div class="hero-preview">
+      ${heroIconSVG(d.element, d.job, 64)}
+      <div class="hero-preview-name">${escHtml(d.name || '未命名幻灵')}</div>
+    </div>
+
+    <div class="form-row">
+      <label class="form-label">幻灵名称</label>
+      <input type="text" class="form-input" id="heroNameInput"
+             value="${escAttr(d.name)}" placeholder="输入幻灵名称"
+             oninput="updateDraft('name', this.value)">
+    </div>
+
+    <div class="form-row">
+      <label class="form-label">幻灵属性</label>
+      <div class="btn-grid">
+        ${ELEMENTS.map(e => `
+          <button type="button" class="opt-btn ${d.element === e ? 'active' : ''}"
+                  style="--c:${ELEMENT_COLOR[e]}"
+                  onclick="setElement('${e}')">
+            ${elementTagSVG(e, 14)}<span>${e}</span>
+          </button>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label class="form-label">幻灵职业</label>
+      <div class="btn-grid">
+        ${JOBS.map(j => `
+          <button type="button" class="opt-btn ${d.job === j ? 'active' : ''}"
+                  style="--c:${d.job === j ? '#c9a84c' : ''}"
+                  onclick="setJob('${j}')">
+            ${jobTagSVG(j, 14)}<span>${j}</span>
+          </button>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label class="form-label">装备套装推荐（可多选）</label>
+      <div class="btn-grid">
+        ${EQUIP_SETS.map(s => `
+          <button type="button" class="opt-btn plain ${(d.sets || []).includes(s) ? 'active' : ''}"
+                  onclick="toggleSet('${s}')"><span>${s}</span></button>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label class="form-label">装备部位属性推荐</label>
+      <div class="part-block">
+        <div class="part-label">鞋子</div>
+        <div class="part-options">
+          ${SHOE_OPTIONS.map(o => `
+            <button type="button" class="opt-btn plain ${d.parts.shoe === o ? 'active' : ''}"
+                    onclick="setPart('shoe', '${o}')"><span>${o}</span></button>
+          `).join('')}
+        </div>
+      </div>
+      <div class="part-block">
+        <div class="part-label">项链</div>
+        <div class="part-options">
+          ${NECK_OPTIONS.map(o => `
+            <button type="button" class="opt-btn plain ${d.parts.neck === o ? 'active' : ''}"
+                    onclick="setPart('neck', '${o}')"><span>${o}</span></button>
+          `).join('')}
+        </div>
+      </div>
+      <div class="part-block">
+        <div class="part-label">戒指</div>
+        <div class="part-options">
+          ${RING_OPTIONS.map(o => `
+            <button type="button" class="opt-btn plain ${d.parts.ring === o ? 'active' : ''}"
+                    onclick="setPart('ring', '${o}')"><span>${o}</span></button>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label class="form-label">神器推荐</label>
+      <div class="artifact-picker">
+        <div class="tab-bar">
+          ${availCats.map(cat => `
+            <button type="button" class="tab-btn ${currentCat === cat ? 'active' : ''}"
+                    onclick="setArtifactTab('${cat}')">${cat}${cat === d.job ? '（专属）' : ''}</button>
+          `).join('')}
+        </div>
+        <div class="btn-grid">
+          ${artifactsForCat.map(a => `
+            <button type="button" class="opt-btn plain ${d.artifact === a ? 'active' : ''}"
+                    onclick="setArtifact('${a.replace(/'/g, "\\'")}', '${currentCat}')">
+              <span>${a}</span>
+            </button>
+          `).join('') || '<span style="color:var(--text-dim);font-size:12.5px;">暂无神器，可在下方新增</span>'}
+        </div>
+        <div class="add-artifact-row">
+          <input type="text" id="newArtifactInput" placeholder="输入新神器名称"
+                 onkeydown="if(event.key==='Enter'){event.preventDefault();addNewArtifact();}">
+          <button type="button" class="btn btn-sm btn-primary" onclick="addNewArtifact()">＋ 新增神器</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label class="form-label">附加备注</label>
+      <textarea class="form-textarea" placeholder="输入幻灵使用技巧、获取方式、搭配思路等…"
+                oninput="updateDraft('note', this.value)">${escHtml(d.note)}</textarea>
+    </div>
+  `;
+}
+
+/* ═══════════════════════════════════════════
+   模态框交互
+   ═══════════════════════════════════════════ */
+function updateDraft(key, value) {
+  if (!heroEditorState) return;
+  heroEditorState.draft[key] = value;
+  if (key === 'name') {
+    const p = document.querySelector('.hero-preview-name');
+    if (p) p.textContent = value || '未命名幻灵';
+  }
+}
+function setElement(e) { heroEditorState.draft.element = e; renderHeroEditor(); }
+function setJob(j) {
+  const d = heroEditorState.draft;
+  d.job = j;
+  const cat = d.artifactCategory;
+  if (cat && cat !== '通用' && cat !== j) { d.artifactCategory = '通用'; d.artifact = ''; }
+  heroEditorState.artifactTab = '通用';
+  renderHeroEditor();
+}
+function toggleSet(s) {
+  const d = heroEditorState.draft;
+  if (!Array.isArray(d.sets)) d.sets = [];
+  const i = d.sets.indexOf(s);
+  if (i >= 0) d.sets.splice(i, 1); else d.sets.push(s);
+  renderHeroEditor();
+}
+function setPart(part, value) { heroEditorState.draft.parts[part] = value; renderHeroEditor(); }
+function setArtifactTab(cat) { heroEditorState.artifactTab = cat; renderHeroEditor(); }
+function setArtifact(name, cat) {
+  heroEditorState.draft.artifact = name;
+  heroEditorState.draft.artifactCategory = cat;
+  renderHeroEditor();
+}
+function addNewArtifact() {
+  const input = document.getElementById('newArtifactInput');
+  if (!input) return;
+  const name = input.value.trim();
+  if (!name) { showToast('请输入神器名称'); return; }
+  const cat = heroEditorState.artifactTab;
+  if (!guideData.artifactsByCategory[cat]) guideData.artifactsByCategory[cat] = [];
+  if (guideData.artifactsByCategory[cat].includes(name)) { showToast('该神器已存在'); return; }
+  guideData.artifactsByCategory[cat].push(name);
+  saveData(true);
+  heroEditorState.draft.artifact = name;
+  heroEditorState.draft.artifactCategory = cat;
+  renderHeroEditor();
+  showToast('已新增神器：' + name);
+}
+
+function saveHero() {
+  if (!heroEditorState) return;
+  const d = heroEditorState.draft;
+  if (!d.name || !d.name.trim()) { showToast('请填写幻灵名称'); return; }
+  if (heroEditorState.isNew) guideData.heroes.push(d);
+  else guideData.heroes[heroEditorState.idx] = d;
+  saveData(true);
+  setStatus('✓ 已保存');
+  closeHeroModal();
+  renderHeroTable();
+  showToast('幻灵已保存');
+}
+
+function deleteHero(idx) {
+  const hero = guideData.heroes[idx];
+  if (!hero) return;
+  const name = (hero.name && hero.name.trim()) || '未命名幻灵';
+  if (!confirm(`确定删除幻灵「${name}」吗？\n此操作不可撤销。`)) return;
+  guideData.heroes.splice(idx, 1);
+  saveData(true);
+  setStatus('✓ 已保存');
+  renderHeroTable();
+  showToast('已删除幻灵：' + name);
+}
+
+function deleteHeroFromModal() {
+  if (!heroEditorState || heroEditorState.isNew) return;
+  const idx = heroEditorState.idx;
+  const hero = guideData.heroes[idx];
+  if (!hero) return;
+  const name = (hero.name && hero.name.trim()) || '未命名幻灵';
+  if (!confirm(`确定删除幻灵「${name}」吗？\n此操作不可撤销。`)) return;
+  guideData.heroes.splice(idx, 1);
+  saveData(true);
+  setStatus('✓ 已保存');
+  closeHeroModal();
+  renderHeroTable();
+  showToast('已删除幻灵：' + name);
+}
+
+/* ═══════════════════════════════════════════
+   通用卡片编辑
+   ═══════════════════════════════════════════ */
+function onEdit(el) {
+  const key = el.dataset.key;
+  const idx = parseInt(el.dataset.idx);
+  const field = el.dataset.field;
+  if (guideData[key] && guideData[key][idx]) {
+    guideData[key][idx][field] = el.innerText;
+    clearTimeout(el._saveTimer);
+    el._saveTimer = setTimeout(() => saveData(true), 500);
+    setStatus('编辑中…');
+  }
+}
+
+function startEdit(cardId) {
+  editingPanels.add(cardId);
+  const panelKey = cardId.split('_')[0];
+  renderPanel(panelKey);
+  document.getElementById('editBanner').classList.add('show');
+}
+function finishEdit(cardId) {
+  editingPanels.delete(cardId);
+  const panelKey = cardId.split('_')[0];
+  renderPanel(panelKey);
+  saveData();
+  if (editingPanels.size === 0) document.getElementById('editBanner').classList.remove('show');
+}
+function exitAllEdit() {
+  editingPanels.clear();
+  renderAll();
+  document.getElementById('editBanner').classList.remove('show');
+  saveData();
+}
+function addCard(key) {
+  if (!guideData[key]) guideData[key] = [];
+  guideData[key].push({ title: '新条目标题', body: '在这里输入攻略内容…' });
+  const newIdx = guideData[key].length - 1;
+  const cardId = key + '_' + newIdx;
+  renderPanel(key);
+  startEdit(cardId);
+  saveData(true);
+  setTimeout(() => {
+    const cards = document.querySelectorAll(`#list-${key} .card`);
+    if (cards[newIdx]) cards[newIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 50);
+}
+function deleteCard(key, idx) {
+  if (!confirm('确定删除这条内容吗？')) return;
+  guideData[key].splice(idx, 1);
+  editingPanels.clear();
+  renderPanel(key);
+  saveData();
+}
+
+/* ═══════════════════════════════════════════
+   导入 / 导出 / 重置
+   ═══════════════════════════════════════════ */
+function exportData() {
+  const blob = new Blob([JSON.stringify(guideData, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '指间山海攻略备份_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('已导出备份文件');
+}
+
+function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function (ev) {
+    try {
+      const imported = JSON.parse(ev.target.result);
+      if (typeof imported !== 'object' || imported === null) throw new Error('格式错误');
+      guideData = imported;
+      ensureDataShape();
+      guideData._heroesClearedV2 = true;
+      editingPanels.clear();
+      resetHeroFilters();
+      renderAll();
+      saveData();
+      showToast('导入成功');
+    } catch (err) {
+      showToast('导入失败：文件格式不正确');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+function resetData() {
+  if (!confirm('确定重置为默认攻略内容吗？当前所有修改将丢失。')) return;
+  guideData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+  guideData.artifactsByCategory = JSON.parse(JSON.stringify(DEFAULT_ARTIFACTS));
+  guideData._heroesClearedV2 = true;
+  editingPanels.clear();
+  resetHeroFilters();
+  renderAll();
+  saveData();
+  showToast('已重置为默认内容');
+}
+
+/* ═══════════════════════════════════════════
+   Toast
+   ═══════════════════════════════════════════ */
+let toastTimer;
+function showToast(msg, variant) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show' + (variant ? ' ' + variant : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+/* ═══════════════════════════════════════════
+   导航切换
+   ═══════════════════════════════════════════ */
+document.getElementById('nav').addEventListener('click', function (e) {
+  const btn = e.target.closest('.nav-btn');
+  if (!btn) return;
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-' + btn.dataset.panel).classList.add('active');
+  editingPanels.clear();
+  document.getElementById('editBanner').classList.remove('show');
+});
+
+document.getElementById('heroModal').addEventListener('click', function (e) {
+  if (e.target === this) closeHeroModal();
+});
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && document.getElementById('heroModal').classList.contains('show')) {
+    closeHeroModal();
+  }
+});
+
+/* ═══════════════════════════════════════════
+   🚀 初始化
+   ═══════════════════════════════════════════ */
+async function initApp() {
+  // 1) 先加载本地数据，立即渲染（避免空白等待）
+  loadLocalData();
+  initHeroFilters();
+  renderAll();
+  renderHeroFilters();
+
+  // 2) 处理云端同步
+  if (!isCloudEnabled()) {
+    setCloudStatus('local');
+    setStatus('就绪 · 数据保存在本地浏览器');
+    const headerSub = document.getElementById('headerSub');
+    if (headerSub) headerSub.textContent = '可编辑的专属攻略手册 · 数据保存在本地浏览器';
+    return;
+  }
+
+  const headerSub = document.getElementById('headerSub');
+  if (headerSub) headerSub.textContent = '多人在线共享攻略 · 所有访问者实时同步';
+
+  setCloudStatus('loading');
+  setStatus('☁ 正在从云端加载…');
+
+  try {
+    const remote = await fetchFromCloud();
+    if (remote && remote.content) {
+      // 云端有数据 —— 以云端为准
+      guideData = remote.content;
+      ensureDataShape();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(guideData));
+      renderAll();
+      renderHeroFilters();
+      lastSyncedAt = remote.updatedAt;
+      setCloudStatus('synced');
+      setStatus('✓ 已从云端加载');
+    } else {
+      // 云端为空 —— 用本地数据初始化云端
+      await saveToCloud(guideData);
+      setStatus('✓ 已初始化云端数据');
+    }
+    startCloudPolling();
+  } catch (e) {
+    console.error('[cloud init]', e);
+    setCloudStatus('error');
+    setStatus('⚠ 云端连接失败，已回退到本地模式');
+    showToast('云端连接失败，使用本地数据', 'error');
+  }
+}
+
+initApp();
+</script>
+
+</body>
+</html>
